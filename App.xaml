@@ -4,6 +4,14 @@
              xmlns:local="clr-namespace:GroceryGUI"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style TargetType="Control" x:Key="Theme">
+            <Setter Property="Background" Value="LightGray"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+        <Style TargetType="TextBox" x:Key="TextBox">
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
     </Application.Resources>
 </Application>
