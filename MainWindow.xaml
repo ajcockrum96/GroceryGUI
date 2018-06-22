@@ -47,8 +47,8 @@
                 <TextBox Grid.Row="7" Grid.Column="0" TextAlignment="Right" HorizontalAlignment="Right" VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=TextBox}">Item #7</TextBox>
 
                 <!--Date Headers-->
-                <TextBox x:Name="mDateValue1" Grid.Row="0" Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=TextBox}">June 17, 2018</TextBox>
-                <TextBox x:Name="mDateValue2" Grid.Row="0" Grid.Column="2" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=TextBox}">June 24, 2018</TextBox>
+                <TextBox local:InputTypeClass.InputType="Date" PreviewMouseLeftButtonUp="onSelectFinished" GotFocus="onInputGotFocus" LostFocus="onInputLostFocus" PreviewTextInput="onTextInput" PreviewKeyDown="onKeyInput"  Grid.Row="0" Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=TextBox}">June 17, 2018</TextBox>
+                <TextBox local:InputTypeClass.InputType="Date" PreviewMouseLeftButtonUp="onSelectFinished" GotFocus="onInputGotFocus" LostFocus="onInputLostFocus" PreviewTextInput="onTextInput" PreviewKeyDown="onKeyInput"  Grid.Row="0" Grid.Column="2" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=TextBox}">June 24, 2018</TextBox>
 
                 <!--Quantities-->
                 <TextBox local:InputTypeClass.InputType="Quantity" PreviewTextInput="onTextInput" PreviewKeyDown="onKeyInput" LostFocus="onInputLostFocus" Grid.Row="1" Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource ResourceKey=TextBox}">1</TextBox>
