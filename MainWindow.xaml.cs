@@ -122,7 +122,7 @@ namespace GroceryGUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int mCurrentDigit = 0;
+        private int fCurrentDigit = 0;
 
 
         public MainWindow()
@@ -139,54 +139,54 @@ namespace GroceryGUI
         /// <para>TextBox objects of type <see cref="References.DATE_INPUT"/>
         /// will be restricted to...</para>
         /// </summary>
-        /// <param name="sender">object that is undergoing the TextInput Event</param>
-        /// <param name="args">Event information passed by TextInput Event</param>
-        private void onTextInput( object sender, TextCompositionEventArgs args )
+        /// <param name="pSender">object that is undergoing the TextInput Event</param>
+        /// <param name="pArgs">Event information passed by TextInput Event</param>
+        private void onTextInput( object pSender, TextCompositionEventArgs pArgs )
         {
-            switch( InputTypeClass.GetInputType( sender ) )
+            switch( InputTypeClass.GetInputType( pSender ) )
             {
                 case References.QUANTITY_INPUT:
-                    TextBox quantity = (TextBox) sender;
-                    if( quantity.Text.Length >= 2 || !isNumeric( args.Text ) )
+                    TextBox quantityBox = (TextBox) pSender;
+                    if( quantityBox.Text.Length >= 2 || !isNumeric( pArgs.Text ) )
                     {
-                        args.Handled = true;
+                        pArgs.Handled = true;
                     }
                     break;
                 case References.DATE_INPUT:
-                    if( isNumeric( args.Text ) )
+                    if( isNumeric( pArgs.Text ) )
                     {
-                        TextBox date = (TextBox) sender;
+                        TextBox dateBox = (TextBox) pSender;
                         // Determine the current portion of date to be edited
-                        string locationString = dateLocation( date.SelectionStart );
+                        string locationString = dateLocation( dateBox.SelectionStart );
 
                         // Highlight the current portion of the date to be edited
-                        selectDateLocation( date, locationString );
+                        selectDateLocation( dateBox, locationString );
 
                         // Get starting index of portion of the date to be edited
-                        int start = date.SelectionStart;
+                        int start = dateBox.SelectionStart;
 
                         // Determine what the current digit of the field being edited
-                        int index = start + mCurrentDigit;
+                        int index = start + fCurrentDigit;
 
                         // Change the current digit of the field being edited
-                        date.Text = date.Text.Remove( index, 1 );
-                        date.Text = date.Text.Insert( index, args.Text );
+                        dateBox.Text = dateBox.Text.Remove( index, 1 );
+                        dateBox.Text = dateBox.Text.Insert( index, pArgs.Text );
 
                         // Increment the current digit of the field being edited (wrapping around if end of field is reached)
                         int range = 1;
                         References.DATE_SELECTION_LENGTH.TryGetValue( locationString, out range );
-                        mCurrentDigit = ++mCurrentDigit % range;
+                        fCurrentDigit = ++fCurrentDigit % range;
 
                         // Fix the date input when the full input is edited
-                        if( mCurrentDigit == 0 )
+                        if( fCurrentDigit == 0 )
                         {
-                            fixDate( date );
+                            fixDate( dateBox );
                         }
 
                         // Re-highlight the current portion of the date being edited
-                        selectDateLocation( date, locationString );
+                        selectDateLocation( dateBox, locationString );
                     }
-                    args.Handled = true;
+                    pArgs.Handled = true;
                     break;
                 default:
                     break;
@@ -204,21 +204,21 @@ namespace GroceryGUI
         /// <para>TextBox objects of type <see cref="References.DATE_INPUT"/>
         /// will...</para>
         /// </summary>
-        /// <param name="sender">object that is undergoing the KeyDown Event</param>
-        /// <param name="args">Event information passed by TextInput Event</param>
-        private void onKeyInput( object sender, KeyEventArgs args )
+        /// <param name="pSender">object that is undergoing the KeyDown Event</param>
+        /// <param name="pArgs">Event information passed by TextInput Event</param>
+        private void onKeyInput( object pSender, KeyEventArgs pArgs )
         {
-            switch( InputTypeClass.GetInputType( sender ) )
+            switch( InputTypeClass.GetInputType( pSender ) )
             {
                 case References.QUANTITY_INPUT:
-                    TextBox quantity = (TextBox) sender;
+                    TextBox quantityBox = (TextBox) pSender;
                     int currentValue = 0;
-                    if( quantity.Text.Length > 0 )
+                    if( quantityBox.Text.Length > 0 )
                     {
-                        currentValue = int.Parse( quantity.Text );
+                        currentValue = int.Parse( quantityBox.Text );
                     }
 
-                    switch( args.Key )
+                    switch( pArgs.Key )
                     {
                         case Key.Up:
                             if( currentValue < 99 )
@@ -226,49 +226,49 @@ namespace GroceryGUI
                                 ++currentValue;
                                 
                             }
-                            quantity.Text = currentValue.ToString();
+                            quantityBox.Text = currentValue.ToString();
                             break;
                         case Key.Down:
                             if( currentValue > 0 )
                             {
                                 --currentValue;
                             }
-                            quantity.Text = currentValue.ToString();
+                            quantityBox.Text = currentValue.ToString();
                             break;
                         case Key.Space:
-                            args.Handled = true;
+                            pArgs.Handled = true;
                             break;
                         default:
                             break;
                     }
                     break;
                 case References.DATE_INPUT:
-                    TextBox date = (TextBox) sender;
+                    TextBox dateBox = (TextBox) pSender;
                     string locationString = "";
 
-                    switch( args.Key )
+                    switch( pArgs.Key )
                     {
                         case Key.Up:
                             // Get starting index of portion of the date to be edited
-                            locationString = dateLocation( date.SelectionStart );
+                            locationString = dateLocation( dateBox.SelectionStart );
 
                             // Increment the current portion of the date
-                            incrementDateLocation( date, locationString, 1 );
-                            selectDateLocation( date, locationString );
-                            args.Handled = true;
+                            incrementDateLocation( dateBox, locationString, 1 );
+                            selectDateLocation( dateBox, locationString );
+                            pArgs.Handled = true;
                             break;
                         case Key.Down:
                             // Get starting index of portion of the date to be edited
-                            locationString = dateLocation( date.SelectionStart );
+                            locationString = dateLocation( dateBox.SelectionStart );
 
                             // Decrement the current portion of the date
-                            incrementDateLocation( date, locationString, -1 );
-                            selectDateLocation( date, locationString );
-                            args.Handled = true;
+                            incrementDateLocation( dateBox, locationString, -1 );
+                            selectDateLocation( dateBox, locationString );
+                            pArgs.Handled = true;
                             break;
                         case Key.Back:
                         case Key.Delete:
-                            args.Handled = true;
+                            pArgs.Handled = true;
                             break;
                         default:
                             break;
@@ -279,12 +279,12 @@ namespace GroceryGUI
             }
         }
 
-        private void onInputGotFocus( object sender, RoutedEventArgs e )
+        private void onInputGotFocus( object pSender, RoutedEventArgs pArgs )
         {
-            switch( InputTypeClass.GetInputType( sender ) )
+            switch( InputTypeClass.GetInputType( pSender ) )
             {
                 case References.DATE_INPUT:
-                    TextBox dateBox = (TextBox) sender;
+                    TextBox dateBox = (TextBox) pSender;
                     DateTime date = DateTime.ParseExact( dateBox.Text, "MMMM dd, yyyy", System.Globalization.CultureInfo.InvariantCulture );
                     dateBox.Text = date.ToString( "MM/dd/yyyy" );
                     break;
@@ -303,25 +303,25 @@ namespace GroceryGUI
         /// <para>The contents of TextBox objects of type <see cref="References.DATE_INPUT"/>
         /// will be...</para>
         /// </summary>
-        /// <param name="sender">object that has lost focus</param>
-        /// <param name="args">Event information passed by LostFocus Event</param>
-        private void onInputLostFocus( object sender, RoutedEventArgs e )
+        /// <param name="pSender">object that has lost focus</param>
+        /// <param name="pArgs">Event information passed by LostFocus Event</param>
+        private void onInputLostFocus( object pSender, RoutedEventArgs pArgs )
         {
-            mCurrentDigit = 0;
-            switch( InputTypeClass.GetInputType( sender ) )
+            fCurrentDigit = 0;
+            switch( InputTypeClass.GetInputType( pSender ) )
             {
                 case References.QUANTITY_INPUT:
-                    TextBox quantity = (TextBox) sender;
+                    TextBox quantityBox = (TextBox) pSender;
                     int currentValue = 0;
-                    if( quantity.Text.Length > 0 )
+                    if( quantityBox.Text.Length > 0 )
                     {
-                        currentValue = int.Parse( quantity.Text );
+                        currentValue = int.Parse( quantityBox.Text );
                     }
-                    quantity.Text = currentValue.ToString();
+                    quantityBox.Text = currentValue.ToString();
                     break;
                 case References.DATE_INPUT:
-                    fixDate( (TextBox) sender );
-                    TextBox dateBox = (TextBox) sender;
+                    fixDate( (TextBox) pSender );
+                    TextBox dateBox = (TextBox) pSender;
                     DateTime date = DateTime.ParseExact( dateBox.Text, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture );
                     dateBox.Text = date.ToString( "MMMM dd, yyyy" );
                     break;
@@ -330,18 +330,18 @@ namespace GroceryGUI
             }
         }
 
-        private void onSelectFinished( object sender, MouseButtonEventArgs args )
+        private void onSelectFinished( object pSender, MouseButtonEventArgs pArgs )
         {
-            mCurrentDigit = 0;
-            fixDate( (TextBox) sender );
-            switch( InputTypeClass.GetInputType( sender ) )
+            fCurrentDigit = 0;
+            fixDate( (TextBox) pSender );
+            switch( InputTypeClass.GetInputType( pSender ) )
             {
                 case References.DATE_INPUT:
-                    TextBox date = (TextBox) sender;
-                    if( date.SelectionLength > 0 )
+                    TextBox dateBox = (TextBox) pSender;
+                    if( dateBox.SelectionLength > 0 )
                     {
-                        string locationString = dateLocation( date.SelectionStart );
-                        selectDateLocation( date, locationString );
+                        string locationString = dateLocation( dateBox.SelectionStart );
+                        selectDateLocation( dateBox, locationString );
                     }
                     break;
                 default:
@@ -353,14 +353,14 @@ namespace GroceryGUI
         /// <summary>
         /// Returns true if the entire string contains only digit characters.
         /// </summary>
-        /// <param name="s">string to be searched for non-digit characters</param>
+        /// <param name="pString">string to be searched for non-digit characters</param>
         /// <returns>true if string only contains digits; false otherwise</returns>
-        private bool isNumeric( string s )
+        private bool isNumeric( string pString )
         {
             bool containsAlpha = false;
-            for( int i = 0; i < s.Length; ++i )
+            for( int i = 0; i < pString.Length; ++i )
             {
-                if( !Char.IsDigit( s, i ) )
+                if( !Char.IsDigit( pString, i ) )
                 {
                     containsAlpha = true;
                     break;
@@ -369,10 +369,10 @@ namespace GroceryGUI
             return !containsAlpha;
         }
 
-        private string dateLocation( int start )
+        private string dateLocation( int pStart )
         {
             string locationString = "";
-            switch( start )
+            switch( pStart )
             {
                 // Month Edit
                 case 0:
@@ -401,62 +401,62 @@ namespace GroceryGUI
             return locationString;
         }
 
-        private void selectDateLocation( TextBox date, string locationString )
+        private void selectDateLocation( TextBox pDateBox, string pLocationString )
         {
             int start = 0;
             int length = 0;
-            References.DATE_SELECTION_START.TryGetValue( locationString, out start );
-            References.DATE_SELECTION_LENGTH.TryGetValue( locationString, out length );
-            date.SelectionStart = start;
-            date.SelectionLength = length;
+            References.DATE_SELECTION_START.TryGetValue( pLocationString, out start );
+            References.DATE_SELECTION_LENGTH.TryGetValue( pLocationString, out length );
+            pDateBox.SelectionStart = start;
+            pDateBox.SelectionLength = length;
         }
 
-        private void incrementDateLocation( TextBox date, string locationString, int increment )
+        private void incrementDateLocation( TextBox pDateBox, string pLocationString, int pInc )
         {
             // Get value of date location
-            selectDateLocation( date, locationString );
-            int currentValue = int.Parse( date.Text.Substring( date.SelectionStart, date.SelectionLength ) );
+            selectDateLocation( pDateBox, pLocationString );
+            int currentValue = int.Parse( pDateBox.Text.Substring( pDateBox.SelectionStart, pDateBox.SelectionLength ) );
 
             // Increment the location
-            currentValue += increment;
+            currentValue += pInc;
 
             // Update date text
-            string formatString = "{0}{1:D" + String.Format( "{0:D1}", date.SelectionLength ) + "}{2}";
-            date.Text = String.Format( formatString, date.Text.Substring( 0, date.SelectionStart ), currentValue, date.Text.Substring( date.SelectionLength + date.SelectionStart ) );
+            string formatString = "{0}{1:D" + String.Format( "{0:D1}", pDateBox.SelectionLength ) + "}{2}";
+            pDateBox.Text = String.Format( formatString, pDateBox.Text.Substring( 0, pDateBox.SelectionStart ), currentValue, pDateBox.Text.Substring( pDateBox.SelectionLength + pDateBox.SelectionStart ) );
 
             // Fix date if "rolled over"
-            fixDate( date );
+            fixDate( pDateBox );
         }
 
-        private void fixYear( int pYear, out bool MAX, out bool MIN, out int oYear )
+        private void fixYear( int pYear, out bool oMax, out bool oMin, out int oYear )
         {
-            MAX = false;
-            MIN = false;
+            oMax = false;
+            oMin = false;
             oYear = pYear;
             if( pYear > References.YEAR_MAX )
             {
                 oYear = References.YEAR_MAX;
-                MAX = true;
+                oMax = true;
             }
             else if( pYear < References.YEAR_MIN )
             {
                 oYear = References.YEAR_MIN;
-                MIN = true;
+                oMin = true;
             }
         }
 
-        private void fixMonth( int pMonth, int pYear, out bool MAX, out bool MIN, out int oMonth, out int oYear )
+        private void fixMonth( int pMonth, int pYear, out bool oMax, out bool oMin, out int oMonth, out int oYear )
         {
-            MAX = false;
-            MIN = false;
+            oMax = false;
+            oMin = false;
             oMonth = pMonth;
             oYear = pYear;
 
             while( oMonth < 1 )
             {
                 --oYear;
-                fixYear( oYear, out MAX, out MIN, out oYear );
-                if( MIN )
+                fixYear( oYear, out oMax, out oMin, out oYear );
+                if( oMin )
                 {
                     oMonth = 1;
                 }
@@ -469,8 +469,8 @@ namespace GroceryGUI
             while( oMonth > References.MONTH_MAX )
             {
                 ++oYear;
-                fixYear( oYear, out MAX, out MIN, out oYear );
-                if( MAX )
+                fixYear( oYear, out oMax, out oMin, out oYear );
+                if( oMax )
                 {
                     oMonth = References.MONTH_MAX;
                 }
@@ -481,7 +481,7 @@ namespace GroceryGUI
             }
         }
 
-        private void fixDate( TextBox date )
+        private void fixDate( TextBox pDateBox )
         {
             // Get Month
             int month = 1;
@@ -489,7 +489,7 @@ namespace GroceryGUI
             int monthLength = 0;
             References.DATE_SELECTION_START.TryGetValue( References.MONTH, out monthStart );
             References.DATE_SELECTION_LENGTH.TryGetValue( References.MONTH, out monthLength );
-            month = int.Parse( date.Text.Substring( monthStart, monthLength ) );
+            month = int.Parse( pDateBox.Text.Substring( monthStart, monthLength ) );
 
             // Get Day
             int day = 1;
@@ -497,7 +497,7 @@ namespace GroceryGUI
             int dayLength = 0;
             References.DATE_SELECTION_START.TryGetValue( References.DAY, out dayStart );
             References.DATE_SELECTION_LENGTH.TryGetValue( References.DAY, out dayLength );
-            day = int.Parse( date.Text.Substring( dayStart, dayLength ) );
+            day = int.Parse( pDateBox.Text.Substring( dayStart, dayLength ) );
 
             // Get Year
             int year = References.YEAR_MIN;
@@ -505,7 +505,7 @@ namespace GroceryGUI
             int yearLength = 0;
             References.DATE_SELECTION_START.TryGetValue( References.YEAR, out yearStart );
             References.DATE_SELECTION_LENGTH.TryGetValue( References.YEAR, out yearLength );
-            year = int.Parse( date.Text.Substring( yearStart, yearLength ) );
+            year = int.Parse( pDateBox.Text.Substring( yearStart, yearLength ) );
 
             // Fix Year
             bool tmpMax = false;
@@ -570,7 +570,7 @@ namespace GroceryGUI
             string monthFormat = "{0:D" + String.Format( "{0:D1}", monthLength ) + "}/";
             string dayFormat   = "{1:D" + String.Format( "{0:D1}", dayLength ) + "}/";
             string yearFormat  = "{2:D" + String.Format( "{0:D1}", yearLength ) + "}";
-            date.Text = String.Format( monthFormat + dayFormat + yearFormat, month, day, year );
+            pDateBox.Text = String.Format( monthFormat + dayFormat + yearFormat, month, day, year );
         }
     }
 }
